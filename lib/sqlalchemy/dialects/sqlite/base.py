@@ -1418,6 +1418,15 @@ class SQLiteCompiler(compiler.SQLCompiler):
 
         return "ON CONFLICT %s DO UPDATE SET %s" % (target_text, action_text)
 
+    def update_from_clause(
+        self, update_stmt, from_table, extra_froms, from_hints, **kw
+    ):
+        kw["asfrom"] = True
+        return "FROM " + ", ".join(
+            t._compiler_dispatch(self, fromhints=from_hints, **kw)
+            for t in extra_froms
+        )
+
 
 class SQLiteDDLCompiler(compiler.DDLCompiler):
     def get_column_specification(self, column, **kwargs):
